@@ -7,14 +7,10 @@ using System.Threading.Tasks;
 
 namespace Fair2Share.Models {
     public class Friends {
-        public int? ProfileId { get; set; }
-        //[ForeignKey("ProfileId")]
-        //[InverseProperty("ProfileId")]
-        public Profile Profile { get; set; }
-        public int? FriendId { get; set; }
-        //[ForeignKey("FriendId")]
-        //[InverseProperty("Friends")]
-        public Profile Friend { get; set; }
+        public int ProfileId { get; set; }
+        public virtual Profile Profile { get; set; }
+        public int FriendId { get; set; }
+        public virtual Profile Friend { get; set; }
         public DateTime? TimeStamp { get; set; }
     }
 }

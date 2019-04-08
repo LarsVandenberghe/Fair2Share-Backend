@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Fair2Share.Data.Repositories {
     public class ApplicationDbContext : IdentityDbContext{
         public DbSet<Profile> Profiles { get; set; }
-        //public DbSet<Friends> Friends { get; set; }
+        public DbSet<Friends> Friends { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options){
 
@@ -19,7 +19,7 @@ namespace Fair2Share.Data.Repositories {
         protected override void OnModelCreating(ModelBuilder builder) {
             base.OnModelCreating(builder);
             builder.ApplyConfiguration(new ProfileConfiguration());
-          //  builder.ApplyConfiguration(new FriendsConfiguration());
+            builder.ApplyConfiguration(new FriendsConfiguration());
         }
     }
 }

@@ -12,16 +12,23 @@ namespace Fair2Share.Models {
         public string Email { get; set; }
         public string PathToImage { get; set; }
         
-        //public ICollection<Friends> Friends { get; set; }
+        public virtual ICollection<Friends> Friends { get; set; }
+        public virtual ICollection<Friends> FriendOf { get; set; }
 
-        //public void AddFriend(Profile friend) {
-        //    //Friends.Add(new Friends { User = this, Friend = friend });
-        //    Friends.Add(friend);
-        //}
+        public void AddFriend(Profile friend) {
+            //has friend not in friendlist
+            //if (Friends.Where(p => p.ProfileId == friend.ProfileId).SingleOrDefault() == null) {
+            //    Friends friends = new Friends { Profile = this, Friend = friend };
+            //    Friends.Add(friends);
+            //    FriendOf.Add(friends);
+            //}
+            //if (friend.Friends.Where(p => p.ProfileId == this.ProfileId).SingleOrDefault() == null) {
+            //    friend.AddFriend(this);
+            //}
+        }
 
-        //public Profile GetFriend(string email) {
-        //    //return Friends.SingleOrDefault(e => e.Friend.Email.Equals(email)).Friend;
-        //    return Friends.SingleOrDefault(e => e.Email.Equals(email));
-        //}
+        public Profile GetFriend(string email) {
+            return Friends.SingleOrDefault(e => e.Friend.Email.Equals(email)).Friend;
+        }
     }
 }
