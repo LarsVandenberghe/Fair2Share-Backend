@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Fair2Share.Models {
     public class Friends {
-        public int ProfileId { get; set; }
+        public long ProfileId { get; set; }
         public virtual Profile Profile { get; set; }
-        public int FriendId { get; set; }
+        public long FriendId { get; set; }
         public virtual Profile Friend { get; set; }
-        public DateTime? TimeStamp { get; set; }
+        public DateTime TimeStamp { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Fair2Share.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,12 @@ namespace Fair2Share.Data.Repositories {
         }
 
         public Profile GetBy(int id) {
-            return _dbContext.Profiles.SingleOrDefault(p => p.ProfileId == id);
+            return _dbContext.Profiles
+                .Include(p => p.Friends).ThenInclude(v => v.Friend)
+                .Include(p => p.Friends).ThenInclude(v => v.Profile)
+                .Include(p => p.FriendOf).ThenInclude(v => v.Friend)
+                .Include(p => p.FriendOf).ThenInclude(v => v.Profile)
+                .SingleOrDefault(p => p.ProfileId == id);
         }
 
         public Profile GetBy(string email) {
