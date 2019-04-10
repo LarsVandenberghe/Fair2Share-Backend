@@ -16,6 +16,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Fair2Share.Controllers
 {
+    [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
     [ApiConventionType(typeof(DefaultApiConventions))]

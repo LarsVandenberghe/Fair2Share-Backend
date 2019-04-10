@@ -12,8 +12,9 @@ namespace Fair2Share.Models {
         public string Email { get; set; }
         public string PathToImage { get; set; }
         
-        public virtual ICollection<Friends> Friends { get; set; }
-        public virtual ICollection<Friends> FriendOf { get; set; }
+        public virtual IEnumerable<Friends> Friends { get; set; }
+        public virtual IEnumerable<Friends> FriendOf { get; set; }
+        public virtual IEnumerable<ProfileActivityIntersection> Activities { get; set; }
 
         public Profile() {
             Friends = new HashSet<Friends>();
@@ -26,16 +27,12 @@ namespace Fair2Share.Models {
                 DateTime timeStamp = DateTime.Now;
                 Friends friends1 = new Friends { ProfileId = this.ProfileId, Profile = this, FriendId=friend.ProfileId, Friend = friend, TimeStamp = timeStamp };
                 Friends friends2 = new Friends { ProfileId = friend.ProfileId, Profile = friend, FriendId = this.ProfileId, Friend = this, TimeStamp = timeStamp };
-                Friends.Add(friends1);
-                FriendOf.Add(friends2);
+                Friends.Append(friends1);
+                FriendOf.Append(friends2);
             }
             //if (friend.Friends.Where(p => p.ProfileId == this.ProfileId).SingleOrDefault() == null) {
             //    friend.AddFriend(this);
             //}
         }
-
-        //public Profile GetFriend(string email) {
-        //    return Friends.SingleOrDefault(e => e.Friend.Email.Equals(email)).Friend;
-        //}
     }
 }

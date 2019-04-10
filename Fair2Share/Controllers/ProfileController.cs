@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Fair2Share.DTOs;
 using Fair2Share.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,12 +23,19 @@ namespace Fair2Share.Controllers
             _profileRepository = profileRepository;
         }
 
-        [HttpGet]
-        public ActionResult<Profile> GetBy(int id) {
-            //FriendsDTO friend = new FriendsDTO { id = _profileRepository.GetBy(id).ProfileId };
-            return _profileRepository.GetBy(id);
-        }
+        //[HttpGet("email")]
+        //[Authorize]
+        //public ActionResult<Profile> GetBy(string email) {
+        //    //FriendsDTO friend = new FriendsDTO { id = _profileRepository.GetBy(id).ProfileId };
+        //    return _profileRepository.GetBy(email);
+        //}
 
+
+        [HttpGet]
+        [Authorize(AuthenticationSchemes=JwtBearerDefaults.AuthenticationScheme)]
+        public ActionResult<Profile> GetProfile() {
+            return _profileRepository.GetBy(User.Identity.Name);
+        }
         //[HttpGet]
         //public ActionResult<IEnumerable<Profile>> GetFriendsOf(int id) {
         //    IEnumerable<Profile> friends = new HashSet<Profile>();

@@ -18,7 +18,7 @@ namespace Fair2Share.Data.Repositories {
             
         }
 
-        public Profile GetBy(int id) {
+        public Profile GetBy(long id) {
             return _dbContext.Profiles
                 .Include(p => p.Friends).ThenInclude(v => v.Friend)
                 .Include(p => p.Friends).ThenInclude(v => v.Profile)
@@ -28,7 +28,12 @@ namespace Fair2Share.Data.Repositories {
         }
 
         public Profile GetBy(string email) {
-            return _dbContext.Profiles.SingleOrDefault(p => p.Email == email);
+            return _dbContext.Profiles
+                .Include(p => p.Friends).ThenInclude(v => v.Friend)
+                .Include(p => p.Friends).ThenInclude(v => v.Profile)
+                .Include(p => p.FriendOf).ThenInclude(v => v.Friend)
+                .Include(p => p.FriendOf).ThenInclude(v => v.Profile)
+                .SingleOrDefault(p => p.Email == email);
         }
 
         public void SaveChanges() {
