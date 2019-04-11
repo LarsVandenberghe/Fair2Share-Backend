@@ -19,19 +19,35 @@ namespace Fair2Share.Data.Repositories {
 
         public Profile GetBy(long id) {
             return _dbContext.Profiles
+                //Friends
                 .Include(p => p.Friends).ThenInclude(v => v.Friend)
                 .Include(p => p.Friends).ThenInclude(v => v.Profile)
                 .Include(p => p.FriendOf).ThenInclude(v => v.Friend)
                 .Include(p => p.FriendOf).ThenInclude(v => v.Profile)
+
+                //FriendRequests
+                .Include(p => p.ReceivedFriendRequests).ThenInclude(v => v.User)
+                .Include(p => p.ReceivedFriendRequests).ThenInclude(v => v.FutureFriend)
+                .Include(p => p.SentFriendRequests).ThenInclude(v => v.User)
+                .Include(p => p.SentFriendRequests).ThenInclude(v => v.FutureFriend)
+
                 .SingleOrDefault(p => p.ProfileId == id);
         }
 
         public Profile GetBy(string email) {
             return _dbContext.Profiles
+                //Friends
                 .Include(p => p.Friends).ThenInclude(v => v.Friend)
                 .Include(p => p.Friends).ThenInclude(v => v.Profile)
                 .Include(p => p.FriendOf).ThenInclude(v => v.Friend)
                 .Include(p => p.FriendOf).ThenInclude(v => v.Profile)
+
+                //FriendRequests
+                .Include(p => p.ReceivedFriendRequests).ThenInclude(v => v.User)
+                .Include(p => p.ReceivedFriendRequests).ThenInclude(v => v.FutureFriend)
+                .Include(p => p.SentFriendRequests).ThenInclude(v => v.User)
+                .Include(p => p.SentFriendRequests).ThenInclude(v => v.FutureFriend)
+
                 .SingleOrDefault(p => p.Email == email);
         }
 

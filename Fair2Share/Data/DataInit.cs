@@ -56,6 +56,21 @@ namespace Fair2Share.Data {
 
             profile2.AddFriend(profile);
             _dbContext.Profiles.Add(profile2);
+
+            //
+            eMailAddress = "mei@mail.be";
+            user = new IdentityUser { UserName = eMailAddress, Email = eMailAddress };
+            await _userManager.CreateAsync(user, "someOtherPassword3");
+
+            var profile3 = new Profile {
+                Email = eMailAddress,
+                Firstname = "Mei",
+                Lastname = "Akasuki"
+            };
+            profile3.SendFriendRequest(profile);
+            _dbContext.Profiles.Add(profile3);
+
+
             _dbContext.SaveChanges();
         }
     }

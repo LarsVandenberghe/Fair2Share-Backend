@@ -11,7 +11,7 @@ namespace Fair2Share.DTOs {
         public string Lastname { get; set; }
         public string Email { get; set; }
         public string PathToImage { get; set; }
-        public virtual ICollection<SimpleProfileDTO> Friends { get; set; }
+        public virtual ICollection<FriendDTO> Friends { get; set; }
 
         public SimpleProfileDTO() {
 
@@ -25,11 +25,10 @@ namespace Fair2Share.DTOs {
             PathToImage = profile.PathToImage;
             Friends = profile.Friends.ToList().Select(p => {
                 Profile profile_temp = p.Friend;
-                return new SimpleProfileDTO {
+                return new FriendDTO {
                     ProfileId = profile_temp.ProfileId,
                     Firstname = profile_temp.Firstname,
                     Lastname = profile_temp.Lastname,
-                    Email = profile_temp.Email,
                     PathToImage = profile_temp.PathToImage
                 };
             }).ToList();

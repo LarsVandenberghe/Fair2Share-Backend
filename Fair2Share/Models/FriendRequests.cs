@@ -10,6 +10,10 @@ namespace Fair2Share.Models {
         public Profile FutureFriend { get; set; }
         public long FutureFriendId { get; set; }
         public DateTime TimeStamp { get; set; }
-        //public int State { get; set; }
+        public FriendRequestState State { get; set; }
+
+        public FriendRequests() {
+            State = FriendRequestState.NEW;
+        }
     }
 }
