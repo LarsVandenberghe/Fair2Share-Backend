@@ -13,5 +13,14 @@ namespace Fair2Share.DTOs {
         public FriendRequestState? FriendRequestState { get; set; }
 
         //public string Email { get; set; }
+        public FriendDTO() {
+        }
+
+        public FriendDTO(Profile profile) {
+            ProfileId = profile.ProfileId;
+            Firstname = profile.Firstname;
+            Lastname = profile.Lastname;
+            PathToImage = profile.PathToImage;
+        }
     }
 }

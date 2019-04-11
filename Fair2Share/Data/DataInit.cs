@@ -40,8 +40,10 @@ namespace Fair2Share.Data {
                 Firstname = "Lars",
                 Lastname = "Vandenberghe"
             };
+            Activity a = new Activity { Name = "testActiviteit", Description = "", CurrencyType = CurrencyType.EURO };
 
             _dbContext.Profiles.Add(profile);
+            profile.Activities.Add(new ProfileActivityIntersection { Activity = a, Profile = profile});
 
             //jef
             eMailAddress = "jef@Test.be";

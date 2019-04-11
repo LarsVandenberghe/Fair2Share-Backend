@@ -1,5 +1,6 @@
 ﻿using Fair2Share.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,37 +19,31 @@ namespace Fair2Share.Data.Repositories {
         }
 
         public Profile GetBy(long id) {
-            return _dbContext.Profiles
-                //Friends
-                .Include(p => p.Friends).ThenInclude(v => v.Friend)
-                .Include(p => p.Friends).ThenInclude(v => v.Profile)
-                .Include(p => p.FriendOf).ThenInclude(v => v.Friend)
-                .Include(p => p.FriendOf).ThenInclude(v => v.Profile)
-
-                //FriendRequests
-                .Include(p => p.ReceivedFriendRequests).ThenInclude(v => v.User)
-                .Include(p => p.ReceivedFriendRequests).ThenInclude(v => v.FutureFriend)
-                .Include(p => p.SentFriendRequests).ThenInclude(v => v.User)
-                .Include(p => p.SentFriendRequests).ThenInclude(v => v.FutureFriend)
-
-                .SingleOrDefault(p => p.ProfileId == id);
+            return Get().SingleOrDefault(p => p.ProfileId == id);
         }
 
         public Profile GetBy(string email) {
+            return Get().SingleOrDefault(p => p.Email == email);
+        }
+
+        private IIncludableQueryable<Profile, ICollection<ProfileActivityIntersection>> Get() {
             return _dbContext.Profiles
-                //Friends
-                .Include(p => p.Friends).ThenInclude(v => v.Friend)
-                .Include(p => p.Friends).ThenInclude(v => v.Profile)
-                .Include(p => p.FriendOf).ThenInclude(v => v.Friend)
-                .Include(p => p.FriendOf).ThenInclude(v => v.Profile)
+            //Friends
+            .Include(p => p.Friends).ThenInclude(v => v.Friend)
+            .Include(p => p.Friends).ThenInclude(v => v.Profile)
+            .Include(p => p.FriendOf).ThenInclude(v => v.Friend)
+            .Include(p => p.FriendOf).ThenInclude(v => v.Profile)
 
-                //FriendRequests
-                .Include(p => p.ReceivedFriendRequests).ThenInclude(v => v.User)
-                .Include(p => p.ReceivedFriendRequests).ThenInclude(v => v.FutureFriend)
-                .Include(p => p.SentFriendRequests).ThenInclude(v => v.User)
-                .Include(p => p.SentFriendRequests).ThenInclude(v => v.FutureFriend)
+            //FriendRequests
+            .Include(p => p.ReceivedFriendRequests).ThenInclude(v => v.User)
+            .Include(p => p.ReceivedFriendRequests).ThenInclude(v => v.FutureFriend)
+            .Include(p => p.SentFriendRequests).ThenInclude(v => v.User)
+            .Include(p => p.SentFriendRequests).ThenInclude(v => v.FutureFriend)
 
-                .SingleOrDefault(p => p.Email == email);
+            //Activities
+            .Include(p => p.Activities).ThenInclude(v => v.Profile)
+            .Include(p => p.Activities).ThenInclude(v => v.Activity).ThenInclude(q => q.Transactions).ThenInclude(l => l.ProfilesInTransaction)
+            .Include(p => p.Activities).ThenInclude(v => v.Activity).ThenInclude(q => q.Participants);
         }
 
         public void SaveChanges() {
