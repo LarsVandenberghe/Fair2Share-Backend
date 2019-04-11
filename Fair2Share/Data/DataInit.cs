@@ -53,8 +53,8 @@ namespace Fair2Share.Data {
                 Firstname = "Jef",
                 Lastname = "Jefferson"
             };
-            profile2.AddFriend(profile);
 
+            profile2.AddFriend(profile);
             _dbContext.Profiles.Add(profile2);
             _dbContext.SaveChanges();
         }

@@ -10,7 +10,11 @@ namespace Fair2Share.Models {
         public string Description { get; set; }
         public DateTime TimeStamp { get; set; }
         public decimal Payment { get; set; }
-        public IEnumerable<Profile> ProfilesInTransaction { get; set; }
+        public ICollection<ProfileTransactionIntersection> ProfilesInTransaction { get; set; }
         public Profile PaidBy { get; set; }
+
+        public Transaction() {
+            ProfilesInTransaction = new HashSet<ProfileTransactionIntersection>();
+        }
     }
 }

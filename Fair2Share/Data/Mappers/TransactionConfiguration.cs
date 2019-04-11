@@ -13,7 +13,7 @@ namespace Fair2Share.Data.Mappers {
             builder.HasKey(p => p.TransactionId);
             builder.Property(p => p.Name).IsRequired(true).HasMaxLength(100);
             //builder.Property(p => p.PaidBy).IsRequired(true);
-            builder.HasOne(p => p.PaidBy).WithMany();
+            builder.HasOne(p => p.PaidBy).WithMany().IsRequired(true);
         }
     }
 }

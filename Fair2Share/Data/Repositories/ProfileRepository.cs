@@ -15,7 +15,6 @@ namespace Fair2Share.Data.Repositories {
 
         public void Add(Profile profile) {
             _dbContext.Profiles.Add(profile);
-            
         }
 
         public Profile GetBy(long id) {

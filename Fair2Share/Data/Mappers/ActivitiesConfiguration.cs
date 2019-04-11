@@ -12,6 +12,7 @@ namespace Fair2Share.Data.Mappers {
             builder.ToTable("Activities");
             builder.HasKey(p => p.ActivityId);
             builder.Property(p => p.Name).IsRequired(true).HasMaxLength(100);
+            builder.HasMany(b => b.Transactions).WithOne().IsRequired(true);
         }
     }
 }

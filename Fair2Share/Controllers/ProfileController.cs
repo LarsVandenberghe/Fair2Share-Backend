@@ -33,14 +33,9 @@ namespace Fair2Share.Controllers
 
         [HttpGet]
         [Authorize(AuthenticationSchemes=JwtBearerDefaults.AuthenticationScheme)]
-        public ActionResult<Profile> GetProfile() {
-            return _profileRepository.GetBy(User.Identity.Name);
+        public ActionResult<SimpleProfileDTO> GetProfile() {
+            SimpleProfileDTO profile = new SimpleProfileDTO(_profileRepository.GetBy(User.Identity.Name));
+            return profile;
         }
-        //[HttpGet]
-        //public ActionResult<IEnumerable<Profile>> GetFriendsOf(int id) {
-        //    IEnumerable<Profile> friends = new HashSet<Profile>();
-        //    _profileRepository.GetBy(id).Friends.ToList().ForEach(e => friends.Append(e.Friend));
-        //    return Ok(friends);
-        //}
     }
 }

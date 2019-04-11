@@ -9,7 +9,12 @@ namespace Fair2Share.Models {
         public string Name { get; set; }
         public string Description { get; set; }
         public CurrencyType CurrencyType { get; set; }
-        public IEnumerable<ProfileActivityIntersection> Participants { get; set; }
-        
+        public ICollection<ProfileActivityIntersection> Participants { get; set; }
+        public ICollection<Transaction> Transactions { get; set; }
+
+        public Activity() {
+            Participants = new HashSet<ProfileActivityIntersection>();
+            Transactions = new HashSet<Transaction>();
+        }
     }
 }

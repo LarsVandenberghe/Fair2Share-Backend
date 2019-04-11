@@ -9,6 +9,6 @@ namespace Fair2Share.Models {
         public Profile Profile { get; set; }
         public long ActivityId { get; set; }
         public Activity Activity { get; set; }
-        public IEnumerable<Transaction> Transactions { get; set; }
+        
     }
 }
