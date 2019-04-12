@@ -26,7 +26,15 @@ namespace Fair2Share.Data.Repositories {
             return Get().SingleOrDefault(p => p.Email == email);
         }
 
-        private IIncludableQueryable<Profile, ICollection<ProfileActivityIntersection>> Get() {
+        public void SaveChanges() {
+            _dbContext.SaveChanges();
+        }
+
+        public void Update(Profile profile) {
+            _dbContext.Profiles.Update(profile);
+        }
+
+        private IIncludableQueryable<Profile, Activity> Get() {
             return _dbContext.Profiles
             //Friends
             .Include(p => p.Friends).ThenInclude(v => v.Friend)
@@ -42,12 +50,8 @@ namespace Fair2Share.Data.Repositories {
 
             //Activities
             .Include(p => p.Activities).ThenInclude(v => v.Profile)
-            .Include(p => p.Activities).ThenInclude(v => v.Activity).ThenInclude(q => q.Transactions).ThenInclude(l => l.ProfilesInTransaction)
-            .Include(p => p.Activities).ThenInclude(v => v.Activity).ThenInclude(q => q.Participants);
-        }
-
-        public void SaveChanges() {
-            _dbContext.SaveChanges();
+            .Include(p => p.Activities).ThenInclude(v => v.Activity);//.ThenInclude(q => q.Transactions).ThenInclude(l => l.ProfilesInTransaction)
+            //.Include(p => p.Activities).ThenInclude(v => v.Activity).ThenInclude(q => q.Participants);
         }
     }
 }

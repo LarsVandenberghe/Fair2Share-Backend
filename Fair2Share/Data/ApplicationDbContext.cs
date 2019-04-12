@@ -11,7 +11,7 @@ namespace Fair2Share.Data.Repositories {
     public class ApplicationDbContext : IdentityDbContext{
         public DbSet<Profile> Profiles { get; set; }
         //public DbSet<Friends> Friends { get; set; }
-        //public DbSet<Activity> Activities { get; set; }
+        public DbSet<Activity> Activities { get; set; }
         //public DbSet<Transaction> Transactions { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options){

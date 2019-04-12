@@ -11,7 +11,7 @@ namespace Fair2Share.DTOs {
         public string Description { get; set; }
         public CurrencyType CurrencyType { get; set; }
         public ICollection<FriendDTO> Participants { get; set; }
-        //public ICollection<Transaction> Transactions { get; set; }
+        public ICollection<Transaction> Transactions { get; set; }
 
         public ActivityDTO() {
 

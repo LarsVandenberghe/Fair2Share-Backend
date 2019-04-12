@@ -18,15 +18,17 @@ namespace Fair2Share.Controllers {
     public class ActivityController : ControllerBase {
 
         private readonly IProfileRepository _profileRepository;
+        private readonly IActivityRepository _activityRepository;
 
-        public ActivityController(IProfileRepository profileRepository) {
+        public ActivityController(IProfileRepository profileRepository, IActivityRepository activityRepository) {
             _profileRepository = profileRepository;
+            _activityRepository = activityRepository;
         }
 
         [HttpGet]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public ActionResult<ICollection<ActivityDTO>> GetAll() {
-            return _profileRepository.GetBy(User.Identity.Name).Activities.Select(p => new ActivityDTO(p.Activity)).ToList();
+            return _profileRepository.GetBy(User.Identity.Name).Activities.Select(p => new ActivityDTO { ActivityId = p.Activity.ActivityId, Name = p.Activity.Name, CurrencyType = p.Activity.CurrencyType, Description = p.Activity.Description}).ToList();
         }
 
         [HttpPost]
@@ -53,6 +55,16 @@ namespace Fair2Share.Controllers {
             pai.Activity.Update(activity);
             _profileRepository.SaveChanges();
             return NoContent();
+        }
+
+        [HttpGet("{id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public ActionResult<ActivityDTO> GetBy(long id) {
+            Activity activity = _activityRepository.GetBy(id);
+            if (activity.Participants.Where(a => a.Profile.Email == User.Identity.Name).SingleOrDefault() == null) {
+                return BadRequest();
+            }
+            return new ActivityDTO( _activityRepository.GetBy(id) );
         }
     }
 }

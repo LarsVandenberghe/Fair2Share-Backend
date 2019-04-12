@@ -32,6 +32,7 @@ namespace Fair2Share {
             );
             
             services.AddScoped<IProfileRepository, ProfileRepository>();
+            services.AddScoped<IActivityRepository, ActivityRepository>();
             services.AddScoped<DataInit>();
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
