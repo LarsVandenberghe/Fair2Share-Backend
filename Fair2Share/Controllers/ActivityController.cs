@@ -25,6 +25,13 @@ namespace Fair2Share.Controllers {
             _activityRepository = activityRepository;
         }
 
+        //TODO: controlleer op randgevallen wat kan er mis gaan? (activity null?)
+        //TODO: bulk add friends
+        //TODO: Update methodes
+        //TODO: verwijderen
+        //TODO: controleer CRRUD
+        //TODO: commentaar
+
         [HttpGet]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public ActionResult<ICollection<ActivityDTO>> GetAll() {
@@ -131,6 +138,7 @@ namespace Fair2Share.Controllers {
                 Description = t.Description,
                 Payment = t.Payment,
                 PaidBy = new FriendDTO(t.PaidBy),
+                TimeStamp = t.TimeStamp,
                 ProfilesInTransaction = t.ProfilesInTransaction.Select(p => new FriendDTO(p.Profile)).ToList()
             }).ToList();
         }
