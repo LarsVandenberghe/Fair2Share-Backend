@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Fair2Share.DTOs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,6 +16,14 @@ namespace Fair2Share.Models {
 
         public Transaction() {
             ProfilesInTransaction = new HashSet<ProfileTransactionIntersection>();
+        }
+
+        public Transaction(TransactionDTO transactionDTO, Profile paidBy) : this(){
+            Name = transactionDTO.Name;
+            Description = transactionDTO.Description;
+            TimeStamp = DateTime.Now;
+            Payment = transactionDTO.Payment;
+            PaidBy = paidBy;
         }
     }
 }

@@ -41,7 +41,6 @@ namespace Fair2Share.Data {
                 Lastname = "Vandenberghe"
             };
             Activity a = new Activity { Name = "testActiviteit", Description = "", CurrencyType = CurrencyType.EURO };
-
             _dbContext.Profiles.Add(profile);
             profile.Activities.Add(new ProfileActivityIntersection { Activity = a, Profile = profile});
 
@@ -59,7 +58,7 @@ namespace Fair2Share.Data {
             profile2.AddFriend(profile);
             _dbContext.Profiles.Add(profile2);
 
-            //
+            //mei
             eMailAddress = "mei@mail.be";
             user = new IdentityUser { UserName = eMailAddress, Email = eMailAddress };
             await _userManager.CreateAsync(user, "someOtherPassword3");

@@ -18,7 +18,7 @@ namespace Fair2Share.Data.Repositories {
 
         public Activity GetBy(long id) {
             return _dbContext.Activities
-                .Include(q => q.Transactions).ThenInclude(l => l.Transaction)
+                .Include(q => q.Transactions)/*.ThenInclude(l => l.Transaction)*/.ThenInclude( a => a.ProfilesInTransaction)
                 .Include(q => q.Participants).ThenInclude(l => l.Profile)
                 .Where(a => a.ActivityId == id).FirstOrDefault();
         }
