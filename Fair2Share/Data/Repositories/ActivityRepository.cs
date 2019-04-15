@@ -16,6 +16,10 @@ namespace Fair2Share.Data.Repositories {
             _dbContext.Activities.Add(activity);
         }
 
+        public void Delete(Activity activity) {
+            _dbContext.Activities.Remove(activity);
+        }
+
         public Activity GetBy(long id) {
             return _dbContext.Activities
                 .Include(q => q.Transactions)/*.ThenInclude(l => l.Transaction)*/.ThenInclude( a => a.ProfilesInTransaction)

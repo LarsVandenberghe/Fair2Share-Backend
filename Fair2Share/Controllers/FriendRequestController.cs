@@ -93,5 +93,20 @@ namespace Fair2Share.Controllers
             }
         }
 
+        [HttpDelete("{id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public IActionResult RemoveFriendRequest(long id) {
+            Profile profile = _profileRepository.GetBy(User.Identity.Name);
+            FriendRequests friendRequest = profile.SentFriendRequests.Where(fr => fr.FutureFriendId == id).FirstOrDefault();
+
+            if (friendRequest == null) {
+                return BadRequest("No friendRequests with that id.");
+            }
+
+            profile.SentFriendRequests.Remove(friendRequest);
+            _profileRepository.SaveChanges();
+            return NoContent();
+        }
+
     }
 }

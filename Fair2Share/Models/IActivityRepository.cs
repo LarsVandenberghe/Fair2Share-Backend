@@ -8,6 +8,7 @@ namespace Fair2Share.Models {
         Activity GetBy(long id);
         void Add(Activity activity);
         void Update(Activity activity);
+        void Delete(Activity activity);
         void SaveChanges();
     }
 }

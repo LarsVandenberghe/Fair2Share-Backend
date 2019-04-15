@@ -25,5 +25,12 @@ namespace Fair2Share.Models {
             Payment = transactionDTO.Payment;
             PaidBy = paidBy;
         }
+
+        public void Update(TransactionDTO transactionDTO, Profile paidBy) {
+            Name = transactionDTO.Name;
+            Description = transactionDTO.Description;
+            Payment = transactionDTO.Payment;
+            PaidBy = paidBy;
+        }
     }
 }
