@@ -25,8 +25,10 @@ namespace Fair2Share.Controllers {
             _activityRepository = activityRepository;
         }
 
-        //TODO: controlleer op randgevallen wat kan er mis gaan? (activity null?)
+        //TODO: controlleer op randgevallen wat kan er mis gaan? (activity null?) -> already in activity etc
         //TODO: bulk add friends
+        //TODO: zorg dat je jezelf ook kan toevoegen in een transactie.
+
         //TODO: Update methodes
         //TODO: verwijderen
         //TODO: controleer CRRUD
@@ -69,25 +71,43 @@ namespace Fair2Share.Controllers {
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public ActionResult<ActivityDTO> GetBy(long id) {
             Activity activity = _activityRepository.GetBy(id);
-            if (activity.Participants.Where(a => a.Profile.Email == User.Identity.Name).SingleOrDefault() == null) {
-                return BadRequest("Activity id not valid");
+            if (activity == null || activity.Participants.Where(a => a.Profile.Email == User.Identity.Name).SingleOrDefault() == null) {
+                return BadRequest("Activity is not valid.");
             }
+
             return new ActivityDTO(activity);
         }
 
-        [HttpPost("{id}/participants/{friend_id}")]
+        [HttpPost("{id}/participants/")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public IActionResult AddFriend(long id, long friend_id) {
+        public IActionResult AddFriend(long id, IEnumerable<long?> friend_ids) {
             Profile profile = _profileRepository.GetBy(User.Identity.Name);
-            Profile friend = profile.Friends.Where(f => f.FriendId == friend_id).Select(f => f.Friend).FirstOrDefault();
-            if (friend == null) {
-                return BadRequest("You cannot add this profile as it's not a friend of yours.");
-            }
+            ICollection<Profile> friends = new List<Profile>();
+
             Activity activity = _activityRepository.GetBy(id);
-            if (activity.Participants.Where(a => a.Profile.Email == User.Identity.Name).SingleOrDefault() == null) {
-                return BadRequest("Activity id not valid");
+            if (activity == null || activity.Participants.Where(a => a.Profile.Email == User.Identity.Name).SingleOrDefault() == null) {
+                return BadRequest("Activity id not valid.");
             }
-            activity.Participants.Add(new ProfileActivityIntersection { Activity = activity, Profile = friend });
+
+            foreach (var friend_id in friend_ids) {
+                Profile friend = profile.Friends.Where(f => f.FriendId == friend_id).Select(f => f.Friend).FirstOrDefault();
+                if (friend == null) {
+                    if (friend_id != profile.ProfileId) {
+                        return BadRequest("You cannot add this profile as it's not a friend of yours.");
+                    } else {
+                        friend = profile;
+                    }
+                }
+                if (activity.Participants.Where(p => p.Profile.Email == friend.Email).SingleOrDefault() != null) {
+                    return BadRequest("Friend is already in activity.");
+                }
+                friends.Add(friend);
+            }
+
+            foreach (var friend in friends) {
+                activity.Participants.Add(new ProfileActivityIntersection { Activity = activity, Profile = friend });
+            }
+
             _activityRepository.Update(activity);
             _activityRepository.SaveChanges();
             return NoContent();
@@ -98,6 +118,9 @@ namespace Fair2Share.Controllers {
         public ActionResult<ActivityDTO> GetParticipants(long id) {
             Profile profile = _profileRepository.GetBy(User.Identity.Name);
             Activity activity = _activityRepository.GetBy(id);
+            if (activity == null) {
+                return BadRequest("Activity id not valid.");
+            }
 
             if (profile.Activities.Where(a => a.ActivityId == id).SingleOrDefault() == null) {
                 return BadRequest("You are not in this activity.");
@@ -110,9 +133,12 @@ namespace Fair2Share.Controllers {
         public IActionResult CreateTransaction(long id, TransactionDTO transaction) {
             Profile profile = _profileRepository.GetBy(User.Identity.Name);
             Profile paidBy = _profileRepository.GetBy(transaction.PaidBy.ProfileId);
+            if (paidBy == null) {
+                return BadRequest("PaidBy is not valid.");
+            }
 
             Activity activity = _activityRepository.GetBy(id);
-            if (activity.Participants.Where(a => a.Profile.Email == User.Identity.Name).SingleOrDefault() == null) {
+            if (activity == null || activity.Participants.Where(a => a.Profile.Email == User.Identity.Name).SingleOrDefault() == null) {
                 return BadRequest("Activity id not valid");
             }
 
@@ -128,7 +154,7 @@ namespace Fair2Share.Controllers {
             Profile profile = _profileRepository.GetBy(User.Identity.Name);
 
             Activity activity = _activityRepository.GetBy(id);
-            if (activity.Participants.Where(a => a.Profile.Email == User.Identity.Name).SingleOrDefault() == null) {
+            if (activity == null  || activity.Participants.Where(a => a.Profile.Email == User.Identity.Name).SingleOrDefault() == null) {
                 return BadRequest("Activity id not valid");
             }
 
@@ -143,23 +169,45 @@ namespace Fair2Share.Controllers {
             }).ToList();
         }
 
-        [HttpPost("{id}/transactions/{transaction_id}/participants/{friend_id}")]
+        [HttpPost("{id}/transactions/{transaction_id}/participants/")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public IActionResult AddFriendToTransaction(long id, long transaction_id, long friend_id) {
+        public IActionResult AddFriendsToTransaction(long id, long transaction_id, IEnumerable<long?> friend_ids) {
             Profile profile = _profileRepository.GetBy(User.Identity.Name);
-            Profile friend = profile.Friends.Where(f => f.FriendId == friend_id).SingleOrDefault().Friend;
+            ICollection<Profile> friends = new List<Profile>();
 
             Activity activity = _activityRepository.GetBy(id);
             if (activity == null || activity.Participants.Where(a => a.Profile.Email == User.Identity.Name).SingleOrDefault() == null) {
                 return BadRequest("Activity id not valid");
             }
-
-            if (friend == null) {
-                return BadRequest("You cannot add this profile as it's not a friend of yours.");
-            }
             Transaction transaction = activity.Transactions.Where(t => t.TransactionId == transaction_id).SingleOrDefault();
+            if (transaction == null) {
+                return BadRequest("Transaction id not valid");
+            }
 
-            transaction.ProfilesInTransaction.Add(new ProfileTransactionIntersection { Profile = friend, Transaction = transaction });
+
+            foreach (var friend_id in friend_ids) {
+                Friends friendintersection = profile.Friends.Where(f => f.FriendId == friend_id).SingleOrDefault();
+                Profile friend;
+                if (friendintersection == null) {
+                    if (friend_id != profile.ProfileId) {
+                        return BadRequest($"You cannot add this profile with id {friend_id}, as it's not a friend of yours.");
+                    } else {
+                        friend = profile;
+                    }
+                } else {
+                    friend = friendintersection.Friend;
+                }
+                if (transaction.ProfilesInTransaction.Where(p => p.ProfileId == friend_id).SingleOrDefault() != null) {
+                    return BadRequest($"Friend {friend_id} is already in transaction.");
+                }
+                friends.Add(friend);
+            }
+
+
+            foreach (var friend in friends) {
+                transaction.ProfilesInTransaction.Add(new ProfileTransactionIntersection { Profile = friend, Transaction = transaction });
+            }
+
             _activityRepository.SaveChanges();
             return NoContent();
         }
