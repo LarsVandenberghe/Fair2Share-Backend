@@ -42,9 +42,9 @@ namespace Fair2Share {
             //services.AddOpenApiDocument();
             services.AddOpenApiDocument(c => {
                 c.DocumentName = "apidocs";
-                c.Title = "Recipe API";
+                c.Title = "Fair2Share API";
                 c.Version = "v1";
-                c.Description = "The Recipe API documentation description.";
+                c.Description = "The Fair2Share API documentation description.";
                 c.DocumentProcessors.Add(new SecurityDefinitionAppender("JWT Token", new SwaggerSecurityScheme {
                     Type = SwaggerSecuritySchemeType.ApiKey,
                     Name = "Authorization",
