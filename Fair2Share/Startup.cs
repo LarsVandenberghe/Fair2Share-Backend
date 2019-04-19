@@ -92,6 +92,14 @@ namespace Fair2Share {
                 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
                 options.User.RequireUniqueEmail = true;
             });
+
+            services.AddCors(options => options.AddPolicy("AllowAllOrigins", builder => {
+                builder.AllowAnyHeader();
+                builder.AllowAnyOrigin();
+                //builder.AllowAnyMethod();
+                //builder.AllowCredentials();
+            })); 
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -102,6 +110,7 @@ namespace Fair2Share {
                 app.UseHsts();
             }
 
+            app.UseCors("AllowAllOrigins");
             app.UseHttpsRedirection();
             app.UseMvc();
 
