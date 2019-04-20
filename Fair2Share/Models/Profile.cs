@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Fair2Share.DTOs;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -11,13 +12,15 @@ namespace Fair2Share.Models {
         public string Lastname { get; set; }
         public string Email { get; set; }
         public string PathToImage { get; set; }
-        
+
         public virtual ICollection<Friends> Friends { get; set; }
         public virtual ICollection<Friends> FriendOf { get; set; }
         public virtual ICollection<ProfileActivityIntersection> Activities { get; set; }
         public virtual ICollection<FriendRequests> ReceivedFriendRequests { get; set; }
         public virtual ICollection<FriendRequests> SentFriendRequests { get; set; }
         public virtual ICollection<ProfileTransactionIntersection> Transactions { get; set; }
+
+        public static string[] IMGEXTENSIONS = new string[]{"jpg", "gif", "jpeg", "png" };
 
         public Profile() {
             Friends = new HashSet<Friends>();
@@ -78,6 +81,23 @@ namespace Fair2Share.Models {
                 ReceivedFriendRequests.Where(p => p.UserId == request.UserId).SingleOrDefault().State = FriendRequestState.IGNORE;
             }
             
+        }
+
+        public void Update(SimpleProfileDTO profileDTO) {
+            if (profileDTO.ProfileId != ProfileId) {
+                throw new ArgumentException("ProfileDTO is not valid.");
+            }
+            if (!(profileDTO.PathToImage == null || profileDTO.PathToImage == "")) {
+                string extension = profileDTO.PathToImage.Split(".").LastOrDefault();
+                if (!Profile.IMGEXTENSIONS.Contains(extension.ToLower())) {
+                    throw new ArgumentException("PathToImage is not valid.");
+                }
+            }
+
+            this.Firstname = profileDTO.Firstname;
+            this.Lastname = profileDTO.Lastname;
+            this.Email = profileDTO.Email;
+            this.PathToImage = profileDTO.PathToImage;
         }
     }
 }
