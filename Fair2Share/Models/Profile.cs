@@ -96,7 +96,6 @@ namespace Fair2Share.Models {
 
             this.Firstname = profileDTO.Firstname;
             this.Lastname = profileDTO.Lastname;
-            this.Email = profileDTO.Email;
             this.PathToImage = profileDTO.PathToImage;
         }
     }

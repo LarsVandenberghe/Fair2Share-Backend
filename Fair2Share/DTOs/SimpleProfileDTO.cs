@@ -12,7 +12,6 @@ namespace Fair2Share.DTOs {
             ProfileId = profile.ProfileId;
             Firstname = profile.Firstname;
             Lastname = profile.Lastname;
-            Email = profile.Email;
             PathToImage = profile.PathToImage;
         }
 
@@ -26,9 +25,6 @@ namespace Fair2Share.DTOs {
         [Required]
         [StringLength(250)]
         public string Lastname { get; set; }
-        [Required]
-        [DataType(DataType.EmailAddress)]
-        public string Email { get; set; }
 
         [DataType(DataType.Url)]
         public string PathToImage { get; set; }

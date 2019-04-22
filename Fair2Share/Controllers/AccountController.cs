@@ -94,5 +94,16 @@ namespace Fair2Share.Controllers
             //signingCredentials is een default parameter die je gaat wijzigen. gebruik in .NET : ipv =
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+        [AllowAnonymous]
+        [HttpGet("checkusername")]
+        public async Task<ActionResult<Boolean>> AccountExists(string email) {
+            if (email == null) {
+                return BadRequest();
+            }
+
+            var user = await _userManager.FindByEmailAsync(email);
+            return user != null;            
+        }
     }
 }
