@@ -12,6 +12,7 @@ namespace Fair2Share.DTOs {
         public string Email { get; set; }
         public string PathToImage { get; set; }
         public virtual ICollection<FriendDTO> Friends { get; set; }
+        public virtual ICollection<ActivityDTO> Activities { get; set; }
         public int AmountOfFriendRequests { get; set; }
 
         public ProfileDTO() {
@@ -31,6 +32,14 @@ namespace Fair2Share.DTOs {
                     Firstname = profile_temp.Firstname,
                     Lastname = profile_temp.Lastname,
                     PathToImage = profile_temp.PathToImage
+                };
+            }).ToList();
+            Activities = profile.Activities.ToList().Select(a => {
+                Activity activity = a.Activity;
+                return new ActivityDTO {
+                    ActivityId = activity.ActivityId,
+                    Name = activity.Name,
+                    Description = activity.Description
                 };
             }).ToList();
             AmountOfFriendRequests = profile.ReceivedFriendRequests.Count();
