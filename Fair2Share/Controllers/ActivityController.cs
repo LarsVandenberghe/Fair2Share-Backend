@@ -37,12 +37,12 @@ namespace Fair2Share.Controllers {
 
         [HttpPost]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public IActionResult AddActivity(InitActivityDTO activityDTO) {
+        public ActionResult<long> AddActivity(InitActivityDTO activityDTO) {
             Profile profile = _profileRepository.GetBy(User.Identity.Name);
             Activity activity = new Activity { Name = activityDTO.Name, Description = activityDTO.Description, CurrencyType = activityDTO.CurrencyType };
             profile.Activities.Add(new ProfileActivityIntersection { Activity = activity, Profile = profile });
             _profileRepository.SaveChanges();
-            return NoContent();
+            return activity.ActivityId;
         }
 
         [HttpPut("{id}")]

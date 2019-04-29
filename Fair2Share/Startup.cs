@@ -27,10 +27,12 @@ namespace Fair2Share {
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonOptions(
-                options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-            );
-            
+            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonOptions(
+            //    options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            //);
+            services.AddMvc();
+
+
             services.AddScoped<IProfileRepository, ProfileRepository>();
             services.AddScoped<IActivityRepository, ActivityRepository>();
             services.AddScoped<DataInit>();
@@ -96,8 +98,8 @@ namespace Fair2Share {
             services.AddCors(options => options.AddPolicy("AllowAllOrigins", builder => {
                 builder.AllowAnyHeader();
                 builder.AllowAnyOrigin();
-                //builder.AllowAnyMethod();
-                //builder.AllowCredentials();
+                builder.AllowAnyMethod();
+                builder.AllowCredentials();
             })); 
 
         }
