@@ -42,7 +42,7 @@ namespace Fair2Share.DTOs {
                     Description = activity.Description
                 };
             }).ToList();
-            AmountOfFriendRequests = profile.ReceivedFriendRequests.Count();
+            AmountOfFriendRequests = profile.ReceivedFriendRequests.Count( p => p.State == FriendRequestState.NEW);
         }
     }
 }
