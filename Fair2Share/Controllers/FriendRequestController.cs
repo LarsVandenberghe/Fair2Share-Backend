@@ -56,24 +56,24 @@ namespace Fair2Share.Controllers
             }
         }
 
-        [HttpPost("id/{email}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public IActionResult SendRequest(long id) {
-            Profile profile = _profileRepository.GetBy(User.Identity.Name);
-            Profile futureFriend = _profileRepository.GetBy(id);
-            if (futureFriend == null) {
-                return BadRequest();
-            } else {
-                try {
-                    profile.SendFriendRequest(futureFriend);
-                    _profileRepository.SaveChanges();
-                    return NoContent();
-                } catch (ArgumentException e) {
-                    return BadRequest(e.Message);
-                }
+        //[HttpPost("id/{email}")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //public IActionResult SendRequest(long id) {
+        //    Profile profile = _profileRepository.GetBy(User.Identity.Name);
+        //    Profile futureFriend = _profileRepository.GetBy(id);
+        //    if (futureFriend == null) {
+        //        return BadRequest();
+        //    } else {
+        //        try {
+        //            profile.SendFriendRequest(futureFriend);
+        //            _profileRepository.SaveChanges();
+        //            return NoContent();
+        //        } catch (ArgumentException e) {
+        //            return BadRequest(e.Message);
+        //        }
 
-            }
-        }
+        //    }
+        //}
 
         [HttpPost("{id}/{accept}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
