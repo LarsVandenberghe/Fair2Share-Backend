@@ -43,7 +43,7 @@ namespace Fair2Share.Controllers
             Profile profile = _profileRepository.GetBy(User.Identity.Name);
             Profile futureFriend = _profileRepository.GetBy(email);
             if (futureFriend == null) {
-                return BadRequest();
+                return NotFound("Account does not exist");
             } else {
                 try {
                     profile.SendFriendRequest(futureFriend);
@@ -81,7 +81,7 @@ namespace Fair2Share.Controllers
             Profile profile = _profileRepository.GetBy(User.Identity.Name);
             FriendRequests friendRequest = profile.ReceivedFriendRequests.Where(p => p.UserId == id).SingleOrDefault();
             if (friendRequest == null) {
-                return BadRequest("No friendRequests with that id.");
+                return NotFound("No friendRequests with that id.");
             } else {
                 try {
                     profile.HandleFriendRequest(friendRequest, accept);
@@ -100,7 +100,7 @@ namespace Fair2Share.Controllers
             FriendRequests friendRequest = profile.SentFriendRequests.Where(fr => fr.FutureFriendId == id).FirstOrDefault();
 
             if (friendRequest == null) {
-                return BadRequest("No friendRequests with that id.");
+                return NotFound("No friendRequests with that id.");
             }
 
             profile.SentFriendRequests.Remove(friendRequest);

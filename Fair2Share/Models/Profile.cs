@@ -56,6 +56,10 @@ namespace Fair2Share.Models {
                 throw new ArgumentException("You can't send a friend request to someone you are already friends with.");
             }
 
+            if (futureFriend.ProfileId == this.ProfileId) {
+                throw new ArgumentException("You can't send yourself a friend request.");
+            }
+
             if (SentFriendRequests.Where(p => p.FutureFriendId == futureFriend.ProfileId).SingleOrDefault() == null) {
                 if (ReceivedFriendRequests.Where(p => p.FutureFriendId == this.ProfileId).SingleOrDefault() == null) {
                     DateTime timeStamp = DateTime.Now;

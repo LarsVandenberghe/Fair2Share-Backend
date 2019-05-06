@@ -135,7 +135,7 @@ namespace Fair2Share.Controllers {
             Profile profile = _profileRepository.GetBy(User.Identity.Name);
             Activity activity = _activityRepository.GetBy(id);
             if (activity == null) {
-                return BadRequest("Activity id not valid.");
+                return NotFound("Activity id not valid.");
             }
 
             if (profile.Activities.Where(a => a.ActivityId == id).SingleOrDefault() == null) {
@@ -151,7 +151,7 @@ namespace Fair2Share.Controllers {
             Activity activity = _activityRepository.GetBy(id);
             ICollection<ProfileActivityIntersection> friends = new List<ProfileActivityIntersection>();
             if (activity == null) {
-                return BadRequest("Activity id not valid.");
+                return NotFound("Activity id not valid.");
             }
 
             if (profile.Activities.Where(a => a.ActivityId == id).SingleOrDefault() == null) {
@@ -200,7 +200,7 @@ namespace Fair2Share.Controllers {
         public IActionResult UpdateTransaction(long id, long transaction_id, TransactionDTO transactionDTO) {
             Activity activity = _activityRepository.GetBy(id);
             if (activity == null || activity.Participants.Where(a => a.Profile.Email == User.Identity.Name).SingleOrDefault() == null) {
-                return BadRequest("Activity id not valid");
+                return NotFound("Activity id not valid");
             }
 
             if (transaction_id != transactionDTO.TransactionId) {

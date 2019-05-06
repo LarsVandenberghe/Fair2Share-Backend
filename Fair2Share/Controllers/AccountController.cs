@@ -98,8 +98,8 @@ namespace Fair2Share.Controllers
         [AllowAnonymous]
         [HttpGet("checkusername")]
         public async Task<ActionResult<Boolean>> AccountExists(string email) {
-            if (email == null) {
-                return BadRequest();
+            if (email == null || email.Equals("")) {
+                return NoContent();
             }
 
             var user = await _userManager.FindByEmailAsync(email);
