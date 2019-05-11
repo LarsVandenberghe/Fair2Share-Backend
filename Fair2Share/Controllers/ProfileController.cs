@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Fair2Share.DTOs;
@@ -54,6 +55,32 @@ namespace Fair2Share.Controllers {
         public ActionResult<SimpleProfileDTO> GetSimpleProfileDTO() {
             SimpleProfileDTO profile = new SimpleProfileDTO(_profileRepository.GetBy(User.Identity.Name));
             return profile;
+        }
+
+        [HttpPost("image")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> PostProfileImage([FromForm]IFormFile file) {
+            Profile profile = _profileRepository.GetBy(User.Identity.Name);
+            using (var ms = new MemoryStream()) {
+                file.CopyTo(ms);
+                var fileBytes = ms.ToArray();
+                profile.ProfileImage = new ProfileImage { Image = fileBytes, Profile = profile };
+                //string s = Convert.ToBase64String(fileBytes);
+                // act on the Base64 data
+            }
+            _profileRepository.SaveChanges();
+            return NoContent();
+        }
+
+        [HttpGet("image/{id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> GetProfileImage(long id) {
+            Profile profile = _profileRepository.GetBy(id);
+            var image = profile.ProfileImage;
+            if (image == null) {
+                return NotFound();
+            }
+            return File(image.Image, "image/jpg", "profile_picture.jpg");
         }
     }
 }

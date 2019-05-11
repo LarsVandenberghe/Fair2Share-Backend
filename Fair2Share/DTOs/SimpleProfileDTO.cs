@@ -12,7 +12,7 @@ namespace Fair2Share.DTOs {
             ProfileId = profile.ProfileId;
             Firstname = profile.Firstname;
             Lastname = profile.Lastname;
-            PathToImage = profile.PathToImage;
+            //PathToImage = profile.PathToImage;
         }
 
         public SimpleProfileDTO() { }

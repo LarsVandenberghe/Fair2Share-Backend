@@ -19,11 +19,11 @@ namespace Fair2Share.Data.Repositories {
         }
 
         public Profile GetBy(long id) {
-            return Get().SingleOrDefault(p => p.ProfileId == id);
+            return Get().Include(pi => pi.ProfileImage).SingleOrDefault(p => p.ProfileId == id);
         }
 
         public Profile GetBy(string email) {
-            return Get().SingleOrDefault(p => p.Email == email);
+            return Get().Include(p => p.ProfileImage).SingleOrDefault(p => p.Email == email);
         }
 
         public void SaveChanges() {
@@ -52,6 +52,7 @@ namespace Fair2Share.Data.Repositories {
             .Include(p => p.Activities).ThenInclude(v => v.Profile)
             .Include(p => p.Activities).ThenInclude(v => v.Activity);//.ThenInclude(q => q.Transactions).ThenInclude(l => l.ProfilesInTransaction)
             //.Include(p => p.Activities).ThenInclude(v => v.Activity).ThenInclude(q => q.Participants);
+
         }
     }
 }

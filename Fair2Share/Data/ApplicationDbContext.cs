@@ -27,6 +27,7 @@ namespace Fair2Share.Data.Repositories {
             builder.ApplyConfiguration(new ProfileConfiguration());
             builder.ApplyConfiguration(new TransactionConfiguration());
             builder.ApplyConfiguration(new ProfileTransactionIntersectionConfiguration());
+            builder.ApplyConfiguration(new ProfileImageConfiguration());
         }
     }
 }

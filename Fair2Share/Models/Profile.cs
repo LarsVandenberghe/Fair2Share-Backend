@@ -11,7 +11,7 @@ namespace Fair2Share.Models {
         public string Firstname { get; set; }
         public string Lastname { get; set; }
         public string Email { get; set; }
-        public string PathToImage { get; set; }
+        public  ProfileImage ProfileImage { get; set; }
 
         public virtual ICollection<Friends> Friends { get; set; }
         public virtual ICollection<Friends> FriendOf { get; set; }
@@ -104,7 +104,6 @@ namespace Fair2Share.Models {
 
             this.Firstname = profileDTO.Firstname;
             this.Lastname = profileDTO.Lastname;
-            this.PathToImage = profileDTO.PathToImage;
         }
     }
 }

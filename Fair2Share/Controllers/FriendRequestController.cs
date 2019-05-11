@@ -31,7 +31,7 @@ namespace Fair2Share.Controllers
                     ProfileId = p.User.ProfileId,
                     Firstname = p.User.Firstname,
                     Lastname = p.User.Lastname,
-                    PathToImage = p.User.PathToImage,
+                    //PathToImage = p.User.PathToImage,
                     FriendRequestState = p.State
                 };
             }).ToList();

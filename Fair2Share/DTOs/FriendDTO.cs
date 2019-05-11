@@ -9,7 +9,6 @@ namespace Fair2Share.DTOs {
         public long ProfileId { get; set; }
         public string Firstname { get; set; }
         public string Lastname { get; set; }
-        public string PathToImage { get; set; }
         public FriendRequestState? FriendRequestState { get; set; }
 
         //public string Email { get; set; }
@@ -20,7 +19,6 @@ namespace Fair2Share.DTOs {
             ProfileId = profile.ProfileId;
             Firstname = profile.Firstname;
             Lastname = profile.Lastname;
-            PathToImage = profile.PathToImage;
         }
     }
 }

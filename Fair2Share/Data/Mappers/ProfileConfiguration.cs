@@ -14,8 +14,6 @@ namespace Fair2Share.Data.Mappers {
             builder.Property(p => p.Firstname).IsRequired().HasMaxLength(100);
             builder.Property(p => p.Lastname).IsRequired().HasMaxLength(100);
             builder.Property(p => p.Email).IsRequired().HasMaxLength(100);
-            builder.Property(p => p.PathToImage).IsRequired(false).HasMaxLength(200);
-            
         }
     }
 }

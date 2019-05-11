@@ -15,7 +15,7 @@ namespace Fair2Share.Data.Mappers {
             builder.Property(p => p.State).IsRequired(true);
             //Check cascading
             builder.HasOne(p => p.User).WithMany(p => p.SentFriendRequests).HasForeignKey(p => p.UserId).OnDelete(DeleteBehavior.Cascade);
-            builder.HasOne(p => p.FutureFriend).WithMany(p => p.ReceivedFriendRequests).HasForeignKey(p => p.FutureFriendId).OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(p => p.FutureFriend).WithMany(p => p.ReceivedFriendRequests).HasForeignKey(p => p.FutureFriendId).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
