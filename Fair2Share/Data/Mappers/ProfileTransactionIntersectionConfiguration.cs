@@ -11,7 +11,7 @@ namespace Fair2Share.Data.Mappers {
         public void Configure(EntityTypeBuilder<ProfileTransactionIntersection> builder) {
             builder.ToTable("ProfileTransaction");
             builder.HasKey(p => new { p.ProfileId, p.TransactionId});
-            builder.HasOne(b => b.Profile).WithMany(b => b.Transactions).HasForeignKey(b => b.ProfileId).OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(b => b.Profile).WithMany(b => b.Transactions).HasForeignKey(b => b.ProfileId).OnDelete(DeleteBehavior.Restrict);
             builder.HasOne(b => b.Transaction).WithMany(b => b.ProfilesInTransaction).HasForeignKey(b => b.TransactionId).OnDelete(DeleteBehavior.Cascade);
         }
     }

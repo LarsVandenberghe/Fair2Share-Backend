@@ -12,9 +12,10 @@ namespace Fair2Share.Data.Mappers {
         public void Configure(EntityTypeBuilder<ProfileImage> builder) {
             builder.ToTable("ProfileImage");
             builder.HasKey(p => p.ProfileId);
-            builder.HasOne(p => p.Profile).WithOne(i => i.ProfileImage);
-            builder.Property(p => p.Image).HasColumnType("varbinary(max)");
+            builder.Property(p => p.Image).HasColumnType("varbinary(max)").IsRequired();
+            builder.Property(p => p.Extension).IsRequired();
+            builder.Property(p => p.FileName).IsRequired();
+            builder.HasOne(p => p.Profile).WithOne(i => i.ProfileImage).IsRequired();
         }
-        
     }
 }
