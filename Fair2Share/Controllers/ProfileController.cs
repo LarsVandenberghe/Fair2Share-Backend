@@ -22,14 +22,6 @@ namespace Fair2Share.Controllers {
             _profileRepository = profileRepository;
         }
 
-        //[HttpGet("email")]
-        //[Authorize]
-        //public ActionResult<Profile> GetBy(string email) {
-        //    //FriendsDTO friend = new FriendsDTO { id = _profileRepository.GetBy(id).ProfileId };
-        //    return _profileRepository.GetBy(email);
-        //}
-
-
         [HttpGet]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public ActionResult<ProfileDTO> GetProfileDTO() {
@@ -60,7 +52,7 @@ namespace Fair2Share.Controllers {
         [HttpPost("image")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> PostProfileImage([FromForm]IFormFile file) {
-            Profile profile = _profileRepository.GetBy(User.Identity.Name);
+            Profile profile = _profileRepository.GetProfileWithImage(User.Identity.Name);
             using (var ms = new MemoryStream()) {
                 file.CopyTo(ms);
                 var fileBytes = ms.ToArray();
@@ -75,7 +67,7 @@ namespace Fair2Share.Controllers {
         [HttpGet("image/{id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> GetProfileImage(long id) {
-            Profile profile = _profileRepository.GetBy(id);
+            Profile profile = _profileRepository.GetProfileWithImage(id);
             var image = profile.ProfileImage;
             if (image == null) {
                 return NotFound();

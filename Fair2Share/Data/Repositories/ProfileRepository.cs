@@ -19,11 +19,19 @@ namespace Fair2Share.Data.Repositories {
         }
 
         public Profile GetBy(long id) {
-            return Get().Include(pi => pi.ProfileImage).SingleOrDefault(p => p.ProfileId == id);
+            return Get().SingleOrDefault(p => p.ProfileId == id);
         }
 
         public Profile GetBy(string email) {
-            return Get().Include(p => p.ProfileImage).SingleOrDefault(p => p.Email == email);
+            return Get().SingleOrDefault(p => p.Email == email);
+        }
+
+        public Profile GetProfileWithImage(long id) {
+            return _dbContext.Profiles.Include(p => p.ProfileImage).SingleOrDefault(p => p.ProfileId == id);
+        }
+
+        public Profile GetProfileWithImage(string email) {
+            return _dbContext.Profiles.Include(p => p.ProfileImage).SingleOrDefault(p => p.Email == email);
         }
 
         public void SaveChanges() {
