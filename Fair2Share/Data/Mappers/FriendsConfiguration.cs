@@ -12,7 +12,7 @@ namespace Fair2Share.Data.Mappers {
             builder.ToTable("Friends");
             builder.HasKey(p => new { p.ProfileId, p.FriendId });
             builder.Property(p => p.TimeStamp).IsRequired(true);
-            builder.HasOne(x => x.Profile).WithMany(x => x.Friends).HasForeignKey(x => x.ProfileId).OnDelete(DeleteBehavior.Cascade); //.OnDelete(DeleteBehavior.SetNull);
+            builder.HasOne(x => x.Profile).WithMany(x => x.Friends).HasForeignKey(x => x.ProfileId).OnDelete(DeleteBehavior.Restrict); //.OnDelete(DeleteBehavior.SetNull);
             builder.HasOne(x => x.Friend).WithMany(x => x.FriendOf).HasForeignKey(x => x.FriendId).OnDelete(DeleteBehavior.Cascade);  //.OnDelete(DeleteBehavior.SetNull);
         }
     }

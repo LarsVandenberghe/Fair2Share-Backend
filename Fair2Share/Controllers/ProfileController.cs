@@ -17,7 +17,7 @@ namespace Fair2Share.Controllers {
     [ApiConventionType(typeof(DefaultApiConventions))]
     public class ProfileController : ControllerBase {
         private readonly IProfileRepository _profileRepository;
-
+        public static string[] ALLOWED_IMAGE_EXT = { "jpg", "jpeg", "gif", "tiff", "bmp", "png" };
         public ProfileController(IProfileRepository profileRepository) {
             _profileRepository = profileRepository;
         }
@@ -52,13 +52,21 @@ namespace Fair2Share.Controllers {
         [HttpPost("image")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> PostProfileImage([FromForm]IFormFile file) {
-            Profile profile = _profileRepository.GetProfileWithImage(User.Identity.Name);
+            if (file.Length > 20000000) {
+                return BadRequest("Your file is too big.");
+            }
+            var fileNameSplit = file.FileName.Split(".");
+            string extension = fileNameSplit[fileNameSplit.Length - 1];
+            if (!ALLOWED_IMAGE_EXT.Contains(extension.ToLower())) {
+                return BadRequest("Your file is not an image.");
+            }
+            Profile profile = _profileRepository.GetBy(User.Identity.Name);
+
+            string name = file.FileName.Substring(0, file.FileName.Length - extension.Length - 2);
             using (var ms = new MemoryStream()) {
                 file.CopyTo(ms);
                 var fileBytes = ms.ToArray();
-                profile.ProfileImage = new ProfileImage { Image = fileBytes, Profile = profile };
-                //string s = Convert.ToBase64String(fileBytes);
-                // act on the Base64 data
+                profile.ProfileImage = new ProfileImage { Image = fileBytes, Profile = profile, FileName = name, Extension = extension };
             }
             _profileRepository.SaveChanges();
             return NoContent();
@@ -72,7 +80,17 @@ namespace Fair2Share.Controllers {
             if (image == null) {
                 return NotFound();
             }
-            return File(image.Image, "image/jpg", "profile_picture.jpg");
+            return File(image.Image, $"image/{image.Extension.ToLower()}", $"{image.FileName}.{image.Extension}");
         }
+
+        [HttpDelete("image")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public IActionResult ResetProfileImage() {
+            Profile profile = _profileRepository.GetBy(User.Identity.Name);
+            profile.ProfileImage = null;
+            _profileRepository.SaveChanges();
+            return NoContent();
+        }
+
     }
 }
