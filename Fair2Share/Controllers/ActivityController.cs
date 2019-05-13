@@ -339,5 +339,20 @@ namespace Fair2Share.Controllers {
             _activityRepository.SaveChanges();
             return NoContent();
         }
+
+        [HttpGet("{id}/summary")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public ActionResult<IDictionary<long, decimal>> GetSummary(long id) {
+            Activity activity = _activityRepository.GetBy(id);
+            if (activity == null || activity.Participants.Where(a => a.Profile.Email == User.Identity.Name).SingleOrDefault() == null) {
+                return BadRequest("Activity is not valid.");
+            }
+            IDictionary<long, decimal> dict = new Dictionary<long, decimal>();
+
+            foreach (var user in activity.Participants) {
+                dict.Add(user.ProfileId, activity.Transactions.Where(t => t.PaidBy.ProfileId == user.ProfileId).Sum(t => t.Payment));
+            }
+            return Ok(dict);
+        }
     }
 }
