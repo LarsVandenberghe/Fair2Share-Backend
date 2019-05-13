@@ -60,7 +60,7 @@ namespace Fair2Share.Controllers {
             if (!ALLOWED_IMAGE_EXT.Contains(extension.ToLower())) {
                 return BadRequest("Your file is not an image.");
             }
-            Profile profile = _profileRepository.GetBy(User.Identity.Name);
+            Profile profile = _profileRepository.GetProfileWithImage(User.Identity.Name);
 
             string name = file.FileName.Substring(0, file.FileName.Length - extension.Length - 2);
             using (var ms = new MemoryStream()) {
@@ -86,7 +86,7 @@ namespace Fair2Share.Controllers {
         [HttpDelete("image")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult ResetProfileImage() {
-            Profile profile = _profileRepository.GetBy(User.Identity.Name);
+            Profile profile = _profileRepository.GetProfileWithImage(User.Identity.Name);
             profile.ProfileImage = null;
             _profileRepository.SaveChanges();
             return NoContent();
