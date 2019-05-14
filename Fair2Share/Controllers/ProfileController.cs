@@ -78,7 +78,7 @@ namespace Fair2Share.Controllers {
             Profile profile = _profileRepository.GetProfileWithImage(id);
             var image = profile.ProfileImage;
             if (image == null) {
-                return NotFound();
+                return NoContent();
             }
             return File(image.Image, $"image/{image.Extension.ToLower()}", $"{image.FileName}.{image.Extension}");
         }

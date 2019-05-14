@@ -356,10 +356,14 @@ namespace Fair2Share.Controllers {
             int amoutnOfMembers;
             foreach (var transaction in activity.Transactions) {
                 amoutnOfMembers = transaction.ProfilesInTransaction.Count;
-                toBePaid = transaction.Payment / amoutnOfMembers;
-                transaction.ProfilesInTransaction.ToList().ForEach(p => {
-                    dict[p.ProfileId] -= toBePaid;
-                });
+                if (amoutnOfMembers != 0) {
+                    toBePaid = transaction.Payment / amoutnOfMembers;
+                    transaction.ProfilesInTransaction.ToList().ForEach(p => {
+                        dict[p.ProfileId] -= toBePaid;
+                    });
+                } else {
+                    dict[transaction.PaidBy.ProfileId] = 0;
+                }
             }
             return Ok(dict);
         }
