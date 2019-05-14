@@ -41,6 +41,7 @@ namespace Fair2Share.Data {
                 Lastname = "Vandenberghe"
             };
             Activity a = new Activity { Name = "testActiviteit", Description = "", CurrencyType = CurrencyType.EURO };
+ 
             _dbContext.Profiles.Add(profile);
             profile.Activities.Add(new ProfileActivityIntersection { Activity = a, Profile = profile});
 
@@ -58,6 +59,19 @@ namespace Fair2Share.Data {
             profile2.AddFriend(profile);
             _dbContext.Profiles.Add(profile2);
 
+            a.Participants.Add(new ProfileActivityIntersection { Activity = a, Profile = profile2 });
+
+            Transaction t = new Transaction { Name = "kayak", PaidBy = profile2, Payment = 10 };
+            t.ProfilesInTransaction = new ProfileTransactionIntersection[] { new ProfileTransactionIntersection { Profile = profile, Transaction = t } };
+
+            Transaction t2 = new Transaction { Name = "kayak2", PaidBy = profile2, Payment = 30 };
+            t2.ProfilesInTransaction = new ProfileTransactionIntersection[] { new ProfileTransactionIntersection { Profile = profile, Transaction = t2 }, new ProfileTransactionIntersection { Profile = profile2, Transaction = t2 } };
+
+            a.Transactions = new Transaction[] {}.ToList();
+            a.Transactions.Add(t);
+            a.Transactions.Add(t2);
+            
+            _dbContext.SaveChanges();
             //mei
             eMailAddress = "mei@mail.be";
             user = new IdentityUser { UserName = eMailAddress, Email = eMailAddress };
