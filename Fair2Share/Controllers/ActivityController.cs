@@ -163,8 +163,17 @@ namespace Fair2Share.Controllers {
                 if (friend == null) {
                     return BadRequest($"You cannot remove this profile ({friend_id}), as it's not in the activity.");
                 }
+
+                if (activity.Transactions.FirstOrDefault(t => t.PaidBy.ProfileId == friend_id) != null) {
+                    return BadRequest($"Profile with id {friend_id}, is in a transaction.");
+                }
+                if (activity.Transactions.FirstOrDefault(t => t.ProfilesInTransaction.FirstOrDefault(q => q.ProfileId == friend_id) != null) != null) {
+                    return BadRequest($"Profile with id {friend_id}, is in a transaction.");
+                }
+
                 friends.Add(friend);
             }
+
 
             foreach (var friend2 in friends) {
                 activity.Participants.Remove(friend2);
