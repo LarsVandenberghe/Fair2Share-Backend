@@ -146,7 +146,7 @@ namespace Fair2Share.Controllers {
 
         [HttpDelete("{id}/participants/")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public ActionResult<ActivityDTO> DeleteParticipants(long id, IEnumerable<long> friend_ids) {
+        public ActionResult<ActivityDTO> DeleteParticipants(long id, [FromQuery]IEnumerable<long> friend_ids) {
             Profile profile = _profileRepository.GetBy(User.Identity.Name);
             Activity activity = _activityRepository.GetBy(id);
             ICollection<ProfileActivityIntersection> friends = new List<ProfileActivityIntersection>();
@@ -312,7 +312,7 @@ namespace Fair2Share.Controllers {
 
         [HttpDelete("{id}/transactions/{transaction_id}/participants/")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public IActionResult RemoveParticipantsFromTransaction(long id, long transaction_id, IEnumerable<long> friend_ids) {
+        public IActionResult RemoveParticipantsFromTransaction(long id, long transaction_id, [FromQuery]IEnumerable<long> friend_ids) {
             //Profile profile = _profileRepository.GetBy(User.Identity.Name);
             ICollection<ProfileTransactionIntersection> friends = new List<ProfileTransactionIntersection>();
 
