@@ -186,7 +186,7 @@ namespace Fair2Share.Controllers {
 
         [HttpPost("{id}/transactions/")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public IActionResult CreateTransaction(long id, TransactionDTO transaction) {
+        public ActionResult<long> CreateTransaction(long id, TransactionDTO transaction) {
             Profile profile = _profileRepository.GetBy(User.Identity.Name);
             Profile paidBy = _profileRepository.GetBy(transaction.PaidBy.ProfileId);
             if (paidBy == null) {
@@ -197,11 +197,11 @@ namespace Fair2Share.Controllers {
             if (activity == null || activity.Participants.Where(a => a.Profile.Email == User.Identity.Name).SingleOrDefault() == null) {
                 return BadRequest("Activity id not valid");
             }
-
-            activity.Transactions.Add(new Transaction(transaction, paidBy));
+            Transaction t = new Transaction(transaction, paidBy);
+            activity.Transactions.Add(t);
             _activityRepository.Update(activity);
             _activityRepository.SaveChanges();
-            return NoContent();
+            return t.TransactionId;
         }
 
         [HttpPut("{id}/transactions/{transaction_id}")]
@@ -371,7 +371,7 @@ namespace Fair2Share.Controllers {
                         dict[p.ProfileId] -= toBePaid;
                     });
                 } else {
-                    dict[transaction.PaidBy.ProfileId] = 0;
+                    dict[transaction.PaidBy.ProfileId] -= transaction.Payment;
                 }
             }
             return Ok(dict);
