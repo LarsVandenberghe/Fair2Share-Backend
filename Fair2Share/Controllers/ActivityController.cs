@@ -249,6 +249,28 @@ namespace Fair2Share.Controllers {
             }).ToList();
         }
 
+        [HttpGet("{id}/transactions/{transaction_id}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public ActionResult<TransactionDTO> GetTransaction(long id, long transaction_id) {
+            Profile profile = _profileRepository.GetBy(User.Identity.Name);
+
+            Activity activity = _activityRepository.GetBy(id);
+            if (activity == null || activity.Participants.Where(a => a.Profile.Email == User.Identity.Name).SingleOrDefault() == null) {
+                return BadRequest("Activity id not valid");
+            }
+
+            Transaction t = _activityRepository.GetTransactionFromActivity(id, transaction_id);
+            return new TransactionDTO {
+                TransactionId = t.TransactionId,
+                Name = t.Name,
+                Description = t.Description,
+                Payment = t.Payment,
+                PaidBy = new FriendDTO(t.PaidBy),
+                TimeStamp = t.TimeStamp,
+                ProfilesInTransaction = t.ProfilesInTransaction.Select(p => new FriendDTO(p.Profile)).ToList()
+            };
+        }
+
         [HttpDelete("{id}/transactions/{transaction_id}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult DeleteTransaction(long id, long transaction_id) {
@@ -281,30 +303,30 @@ namespace Fair2Share.Controllers {
             if (activity == null || activity.Participants.Where(a => a.Profile.Email == User.Identity.Name).SingleOrDefault() == null) {
                 return BadRequest("Activity id not valid");
             }
-            Transaction transaction = activity.Transactions.Where(t => t.TransactionId == transaction_id).SingleOrDefault();
-            if (transaction == null) {
-                return BadRequest("Transaction id not valid");
+
+            Transaction transaction = null;
+            try {
+                transaction = _activityRepository.GetTransactionFromActivity(id, transaction_id);
+            } catch (Exception e) {
+                return BadRequest("Activity id not valid");
             }
 
             Profile friend;
-            Friends friendintersection;
+            ProfileActivityIntersection profileActintersection;
             foreach (var friend_id in friend_ids) {
-                friendintersection = profile.Friends.Where(f => f.FriendId == friend_id).SingleOrDefault();
+                profileActintersection = activity.Participants.Where(f => f.ProfileId == friend_id).SingleOrDefault();
 
-                if (friendintersection == null) {
+                if (profileActintersection == null) {
                     if (friend_id != profile.ProfileId) {
-                        return BadRequest($"You cannot add this profile with id {friend_id}, as it's not a friend of yours.");
+                        return BadRequest($"You cannot add this profile with id {friend_id}, as he is not in this activity.");
                     } else {
                         friend = profile;
                     }
                 } else {
-                    friend = friendintersection.Friend;
+                    friend = profileActintersection.Profile;
                 }
                 if (transaction.ProfilesInTransaction.Where(p => p.ProfileId == friend_id).SingleOrDefault() != null) {
-                    return BadRequest($"Friend {friend_id} is already in transaction.");
-                }
-                if (activity.Participants.Where(p => p.ProfileId == friend_id).SingleOrDefault() == null) {
-                    return BadRequest($"Friend {friend_id} is not a member of this activity.");
+                    return BadRequest($"Profile {friend_id} is already in transaction.");
                 }
 
                 friends.Add(friend);
@@ -322,14 +344,15 @@ namespace Fair2Share.Controllers {
         [HttpDelete("{id}/transactions/{transaction_id}/participants/")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult RemoveParticipantsFromTransaction(long id, long transaction_id, [FromQuery]IEnumerable<long> friend_ids) {
-            //Profile profile = _profileRepository.GetBy(User.Identity.Name);
             ICollection<ProfileTransactionIntersection> friends = new List<ProfileTransactionIntersection>();
 
-            Activity activity = _activityRepository.GetBy(id);
-            if (activity == null || activity.Participants.Where(a => a.Profile.Email == User.Identity.Name).SingleOrDefault() == null) {
+            Transaction transaction = null;
+            try {
+                transaction = _activityRepository.GetTransactionFromActivity(id, transaction_id);
+            } catch (Exception e) {
                 return BadRequest("Activity id not valid");
             }
-            Transaction transaction = activity.Transactions.Where(t => t.TransactionId == transaction_id).SingleOrDefault();
+            
             if (transaction == null) {
                 return BadRequest("Transaction id not valid");
             }
@@ -337,7 +360,7 @@ namespace Fair2Share.Controllers {
             foreach (var friend_id in friend_ids) {
                 ProfileTransactionIntersection pti = transaction.ProfilesInTransaction.Where(p => p.ProfileId == friend_id).SingleOrDefault();
                 if (pti == null) {
-                    return BadRequest($"Profile with id {pti.ProfileId}, does not belong to this transaction.");
+                    return BadRequest($"Profile with id {friend_id}, does not belong to this transaction.");
                 }
                 friends.Add(pti);
             }
