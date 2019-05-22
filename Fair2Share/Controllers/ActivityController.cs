@@ -197,6 +197,10 @@ namespace Fair2Share.Controllers {
             if (activity == null || activity.Participants.Where(a => a.Profile.Email == User.Identity.Name).SingleOrDefault() == null) {
                 return BadRequest("Activity id not valid");
             }
+
+            if (transaction.Payment < 0) {
+                return BadRequest("Payment cannot be negative.");
+            }
             Transaction t = new Transaction(transaction, paidBy);
             activity.Transactions.Add(t);
             _activityRepository.Update(activity);
@@ -223,6 +227,10 @@ namespace Fair2Share.Controllers {
             if (paidBy == null) {
                 return BadRequest("PaidBy is not a member of the activity.");
             }
+            if (transactionDTO.Payment < 0) {
+                return BadRequest("Payment cannot be negative.");
+            }
+
             transaction.Update(transactionDTO, paidBy.Profile);
             _activityRepository.SaveChanges();
             return NoContent();
@@ -260,6 +268,10 @@ namespace Fair2Share.Controllers {
             }
 
             Transaction t = _activityRepository.GetTransactionFromActivity(id, transaction_id);
+
+            if (t == null) {
+                return BadRequest("Transaction id not valid");
+            }
             return new TransactionDTO {
                 TransactionId = t.TransactionId,
                 Name = t.Name,
@@ -279,14 +291,14 @@ namespace Fair2Share.Controllers {
                 return BadRequest("Activity id not valid");
             }
 
-            Transaction transaction = activity.Transactions.Where(t => t.TransactionId == transaction_id).SingleOrDefault();
+            Transaction transaction = _activityRepository.GetTransactionFromActivity(id, transaction_id);//activity.Transactions.Where(t => t.TransactionId == transaction_id).SingleOrDefault();
             if (transaction == null) {
                 return BadRequest("Transaction id does not exist for activity.");
             }
 
-            if (transaction.ProfilesInTransaction.Count != 0) {
-                return BadRequest("Transaction has Participants.");
-            }
+            //if (transaction.ProfilesInTransaction.Count != 0) {
+            //    return BadRequest("Transaction has Participants.");
+            //}
 
             activity.Transactions.Remove(transaction);
             _activityRepository.SaveChanges();
@@ -386,7 +398,9 @@ namespace Fair2Share.Controllers {
             }
             decimal toBePaid;
             int amoutnOfMembers;
-            foreach (var transaction in activity.Transactions) {
+            Transaction transaction;
+            foreach (var transactiontemp in activity.Transactions) {
+                transaction = _activityRepository.GetTransactionFromActivity(id, transactiontemp.TransactionId);
                 amoutnOfMembers = transaction.ProfilesInTransaction.Count;
                 if (amoutnOfMembers != 0) {
                     toBePaid = transaction.Payment / amoutnOfMembers;
