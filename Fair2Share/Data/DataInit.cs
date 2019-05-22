@@ -19,8 +19,10 @@ namespace Fair2Share.Data {
     
 
         public async Task InitializeData() {
-            _dbContext.Database.EnsureDeleted();
-            if (_dbContext.Database.EnsureCreated()) {
+            bool firstrun = !true;
+
+            //_dbContext.Database.EnsureDeleted();
+            if (firstrun/*_dbContext.Database.EnsureCreated()*/) {
                 await InitializeProfiles();
                 _dbContext.SaveChanges();
             }

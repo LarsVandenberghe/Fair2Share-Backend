@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Text;
+using System.Threading.Tasks;
 using Fair2Share.Data;
 using Fair2Share.Data.Repositories;
 using Fair2Share.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -27,10 +29,7 @@ namespace Fair2Share {
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
 
-            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonOptions(
-            //    options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-            //);
-            services.AddMvc();
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
 
             services.AddScoped<IProfileRepository, ProfileRepository>();
@@ -41,7 +40,6 @@ namespace Fair2Share {
                 Configuration.GetConnectionString("DefaultConnection"))
             );
 
-            //services.AddOpenApiDocument();
             services.AddOpenApiDocument(c => {
                 c.DocumentName = "apidocs";
                 c.Title = "Fair2Share API";
@@ -62,7 +60,6 @@ namespace Fair2Share {
             services.AddAuthentication(x => {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                //IdentityModelEventSource.ShowPII = true;
             })
             .AddJwtBearer(x => {
                 x.RequireHttpsMetadata = false;
@@ -96,29 +93,42 @@ namespace Fair2Share {
             });
 
             services.AddCors(options => options.AddPolicy("AllowAllOrigins", builder => {
-                builder.AllowAnyHeader();
+                //builder.AllowAnyHeader();
                 builder.AllowAnyOrigin();
-                builder.AllowAnyMethod();
-                builder.AllowCredentials();
-            })); 
+                //builder.AllowAnyMethod();
+                //builder.AllowCredentials();
+            }));
 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, DataInit dataInit) {
+
+            app.Use(async (HttpContext context, Func<Task> next) => {
+                await next.Invoke();
+
+                if (context.Response.StatusCode == 404 && !context.Request.Path.Value.Contains("/api")) {
+                    context.Request.Path = new PathString("/index.html");
+                    await next.Invoke();
+                }
+            });
+
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
             } else {
                 app.UseHsts();
             }
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
 
-            app.UseCors("AllowAllOrigins");
+            //app.UseCors();
             app.UseHttpsRedirection();
             app.UseMvc();
 
+
             app.UseSwagger();
             app.UseSwaggerUi3();
-            dataInit.InitializeData().Wait();
+            //dataInit.InitializeData().Wait();
         }
     }
 }
