@@ -61,7 +61,7 @@ namespace Fair2Share.Models {
             }
 
             if (SentFriendRequests.Where(p => p.FutureFriendId == futureFriend.ProfileId).SingleOrDefault() == null) {
-                if (ReceivedFriendRequests.Where(p => p.FutureFriendId == this.ProfileId).SingleOrDefault() == null) {
+                if (ReceivedFriendRequests.Where(p => p.UserId == futureFriend.ProfileId).SingleOrDefault() == null) {
                     DateTime timeStamp = DateTime.Now;
                     FriendRequests friendRequest = new FriendRequests { FutureFriend = futureFriend, User = this, TimeStamp = timeStamp };
                     SentFriendRequests.Add(friendRequest);
